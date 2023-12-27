@@ -1,1 +1,2 @@
 # AStar
+literally the most bare bones implementation of AStar in c++. it works, it uses indices as part of sets. the algorythm is an almost verbatim implementation of the wikipedia article //https://en.wikipedia.org/wiki/A*_search_algorithm
