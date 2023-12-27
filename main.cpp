@@ -3,7 +3,7 @@
 #include <raymath.h>
 //for testing 
 #define WIN_MAX 900
-#define LCL_DIST 200
+#define LCL_DIST 25
 struct node_t{
 	Vector2 location;
 	TArray<int> edges;
@@ -19,9 +19,10 @@ bool TArrayContains(TArray<int> &vec, int value){
 	return contains;
 }
 int main(){
+	const int node_num = 8192;
 	SetRandomSeed(time(0));
 	TArray<node_t> nodes = {};
-	for(int i =0; i<32; i++){
+	for(int i =0; i<node_num; i++){
 		node_t tmp ={.location = {(float)GetRandomValue(0, WIN_MAX), (float)GetRandomValue(0, WIN_MAX)}, .connected = false, .edges = {}};
 		nodes.Add(tmp);
 	}
@@ -40,7 +41,10 @@ int main(){
 	InitWindow(900,900,"pathfinder");
 	TArray<int> Active = {};
 	int start = GetRandomValue(0,nodes.Num());
-	int end = GetRandomValue(start,nodes.Num());
+	int end = GetRandomValue(0,nodes.Num());
+	if(start == end){
+		end = (start+1)%node_num;
+	}
 	Active.Add(start);
 	Active.Add(end);
 	TArray<AStarNode_t> astarnodes = {};

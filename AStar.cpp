@@ -92,12 +92,10 @@ TArray<int> AStar(TArray<AStarNode_t> in_nodes, int start, int end){
 	while(openset.Num()>0){
 		TArray<AStarInternalNode_t> tmp = {};
 		for(int i =0; i<openset.Num(); i++){
-			printf("%d\n",nodes[openset[i]].idx);
 			tmp.Add(nodes[openset[i]]);
 		}
 		int crtmp = set_min(tmp);
 		int current = openset[crtmp];
-		printf("start: %d, current:%d end: %d\n",start, current, end);
 		if(current == end){
 			return reconstruct_path(camefrom, current);
 		}
@@ -117,7 +115,5 @@ TArray<int> AStar(TArray<AStarNode_t> in_nodes, int start, int end){
 		}
 	}
 	//end fscore set up
-	printf("returned empty set\n");
-	exit(0);
 	return {};
 }
