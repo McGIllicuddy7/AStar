@@ -11,7 +11,7 @@
 
 //for testing 
 
-#define LCL_DIST 12
+#define LCL_DIST 50
 struct node_t{
 	Vector2 location;
 	TArray<int> edges;
@@ -27,7 +27,7 @@ bool TArrayContains(TArray<int> &vec, int value){
 	return contains;
 }
 int main(){
-	const int node_num = 4096*2;
+	const int node_num = 2048;
 	SetRandomSeed(time(0));
 	TArray<node_t> nodes = {};
 	for(int i =0; i<node_num; i++){
