@@ -1,8 +1,8 @@
 #include "AStar.h"
-#include <raylib.h>
-#include <raymath.h>
+#include <Raylib/raylib.h>
+#include <Raylib/raymath.h>
 //for testing 
-#define WIN_MAX 1000
+#define WIN_MAX 1400
 #define LCL_DIST 25
 struct node_t{
 	Vector2 location;
@@ -19,11 +19,11 @@ bool TArrayContains(TArray<int> &vec, int value){
 	return contains;
 }
 int main(){
-	const int node_num = 4096;
+	const int node_num = 4096*1.5;
 	SetRandomSeed(time(0));
 	TArray<node_t> nodes = {};
 	for(int i =0; i<node_num; i++){
-		node_t tmp ={.location = {(float)GetRandomValue(0, WIN_MAX), (float)GetRandomValue(0, WIN_MAX)}, .connected = false, .edges = {}};
+		node_t tmp ={.location = {(float)GetRandomValue(0, WIN_MAX), (float)GetRandomValue(0, WIN_MAX)},.edges = {}, .connected = false};
 		nodes.Add(tmp);
 	}
 	nodes[0].connected = true;
@@ -38,7 +38,8 @@ int main(){
 		}
 	}
 	SetTraceLogLevel(LOG_FATAL);
-	InitWindow(1000,1000,"pathfinder");
+	SetTargetFPS(60);
+	InitWindow(WIN_MAX,WIN_MAX,"pathfinder");
 	TArray<int> Active = {};
 	int start = GetRandomValue(0,nodes.Num());
 	int end = GetRandomValue(0,nodes.Num());
@@ -122,6 +123,7 @@ int main(){
 				}
 			}
 		}
+		DrawFPS(WIN_MAX-100,100);
 		EndDrawing();
 	}
 	return 0;
