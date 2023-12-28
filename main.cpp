@@ -2,7 +2,7 @@
 #include <raylib.h>
 #include <raymath.h>
 //for testing 
-#define WIN_MAX 900
+#define WIN_MAX 1000
 #define LCL_DIST 25
 struct node_t{
 	Vector2 location;
@@ -19,7 +19,7 @@ bool TArrayContains(TArray<int> &vec, int value){
 	return contains;
 }
 int main(){
-	const int node_num = 8192;
+	const int node_num = 4096;
 	SetRandomSeed(time(0));
 	TArray<node_t> nodes = {};
 	for(int i =0; i<node_num; i++){
@@ -38,15 +38,13 @@ int main(){
 		}
 	}
 	SetTraceLogLevel(LOG_FATAL);
-	InitWindow(900,900,"pathfinder");
+	InitWindow(1000,1000,"pathfinder");
 	TArray<int> Active = {};
 	int start = GetRandomValue(0,nodes.Num());
 	int end = GetRandomValue(0,nodes.Num());
 	if(start == end){
 		end = (start+1)%node_num;
 	}
-	Active.Add(start);
-	Active.Add(end);
 	TArray<AStarNode_t> astarnodes = {};
 	for(int i =0; i<nodes.Num(); i++){
 		AStarNode_t node;
@@ -60,29 +58,66 @@ int main(){
 		node.euc_distance = Vector2Distance(nodes[i].location, nodes[end].location);
 		astarnodes.Add(node);
 	}
+	
 	TArray<int> path = AStar(astarnodes, start, end);
+	/*
 	for(int i =0; i<path.Num(); i++){
 		Active.Add(path[i]);
-	}
+	}*/
+	path.Add(end);
+	int idx = 0;
+	double tval =0;
+	Color bg = {62,0,0,255};
 	while(!WindowShouldClose()){
+		tval+= GetFrameTime();
+		if(idx<path.Num() && tval>0){
+			Active.Add(path[idx]);
+			idx++;
+			tval = 0;
+		}
+		else if(idx ==path.Num()){
+			tval = 0;
+			start = GetRandomValue(0,nodes.Num());
+			end = GetRandomValue(0,nodes.Num());
+			if(start == end){
+				end = (start+1)%node_num;
+			}
+			Active = {};
+			path = AStar(astarnodes,start,end);
+			path.Add(end);
+			idx = 0;
+		}
 		BeginDrawing();
 		ClearBackground(BLACK);
+		//draw non active
 		for(int i = 0; i<nodes.Num(); i++){
 			bool contains = TArrayContains(Active, i);
-			if(contains){
-				DrawCircleV(nodes[i].location, 6,GREEN);
+			if(!contains && !(i == start) && !(i == end)){
+				DrawCircleV(nodes[i].location, 3,bg);
 			}
-			else{
-				DrawCircleV(nodes[i].location, 6,RED);
+			for(int j =0; j<nodes[i].edges.Num(); j++){
+				bool contains2 = TArrayContains(Active, nodes[i].edges[j]);
+				if(nodes[i].edges[j]>i){
+					if (!contains && !contains2){
+						DrawLineV(nodes[i].location, nodes[nodes[i].edges[j]].location, bg);
+					}
+				}
+			}
+		}
+		//draw active
+		for(int i = 0; i<nodes.Num(); i++){
+			bool contains = TArrayContains(Active, i);
+			if(i == start || i == end){
+				DrawCircleV(nodes[i].location, 3,BLUE);
+			}
+			else if(contains){
+				DrawCircleV(nodes[i].location, 3,GREEN);
 			}
 			for(int j =0; j<nodes[i].edges.Num(); j++){
 				bool contains2 = TArrayContains(Active, nodes[i].edges[j]);
 				if(nodes[i].edges[j]>i){
 					if(contains && contains2){
 						DrawLineV(nodes[i].location, nodes[nodes[i].edges[j]].location, GREEN);
-					}
-					else{
-						DrawLineV(nodes[i].location, nodes[nodes[i].edges[j]].location, RED);
 					}
 				}
 			}

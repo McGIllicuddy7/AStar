@@ -37,6 +37,7 @@ static TArray<int> reconstruct_path(TArray<int> camefrom, int current){
 		out.Add(current);
 		current = camefrom[current];
 	}
+    out.Add(current);
 	return out;
 }
 TArray<int> SetRemove(TArray<int> set, int index){
