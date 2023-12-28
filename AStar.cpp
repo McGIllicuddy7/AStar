@@ -62,6 +62,9 @@ static bool SetContains(TArray<int> set, int value){
 	return false;
 }
 TArray<int> AStar(TArray<AStarNode_t> in_nodes, int start, int end){
+    int start_tmp = start;
+    start = end;
+    end = start_tmp;
 	TArray<AStarInternalNode_t> nodes = {};
 	//set up
 	const double inf = 10e15;

@@ -1,4 +1,5 @@
 #include "AStar.h"
+#include <chrono>
 #ifdef __linux__
 #include <Raylib/raylib.h>
 #include <Raylib/raymath.h>
@@ -6,11 +7,12 @@
 #else
 #include <raylib.h>
 #include <raymath.h>
-#define WIN_MAX 100
+#define WIN_MAX 1000
 #endif
 
 //for testing 
-
+#define DRAW_INACTIVE
+#undef DRAW_INACTIVE
 #define LCL_DIST 50
 struct node_t{
 	Vector2 location;
@@ -71,14 +73,22 @@ int main(){
 	}*/
 	path.Add(end);
 #ifdef profile
-	for(int i =0; i<500; i++){
+	int num_count = 10;
+	long long average_time_a_star = 0;
+	for(int i =0; i<num_count; i++){
 		start = GetRandomValue(0,nodes.Num());
 		end = GetRandomValue(0,nodes.Num());
 		if(start == end){
 			end = (start+1)%node_num;
 		}
+		auto t1 =std::chrono::high_resolution_clock::now();
 		path = AStar(astarnodes, start, end);
+		auto t2 = std::chrono::high_resolution_clock::now()-t1;
+		long long elapsed = std::chrono::duration_cast<std::chrono::microseconds>(t2).count();
+		printf("case %d took %f seconds for %zu nodes\n",i,(double)elapsed/10e5, path.Num());
+		average_time_a_star += elapsed;
 	}
+	printf("%f average time\n", ((double)average_time_a_star/10e5)/num_count);
 	return 0;
 #endif
 	int idx = 0;
@@ -114,6 +124,7 @@ restart:
 		BeginDrawing();
 		ClearBackground(BLACK);
 		//draw non active
+#ifdef DRAW_INACTIVE
 		for(int i = 0; i<nodes.Num(); i++){
 			bool contains = TArrayContains(Active, i);
 			if(!contains && !(i == start) && !(i == end)){
@@ -128,11 +139,15 @@ restart:
 				}
 			}
 		}
+#endif
 		//draw active
 		for(int i = 0; i<nodes.Num(); i++){
 			bool contains = TArrayContains(Active, i);
-			if(i == start || i == end){
+			if(i == start){
 				DrawCircleV(nodes[i].location, 3,BLUE);
+			}
+			else if(i == end){
+				DrawCircleV(nodes[i].location, 3,PURPLE);
 			}
 			else if(contains){
 				DrawCircleV(nodes[i].location, 3,GREEN);
