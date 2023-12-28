@@ -71,7 +71,7 @@ int main(){
 	}*/
 	path.Add(end);
 #ifdef profile
-	for(int i =0; i<500000; i++){
+	for(int i =0; i<500; i++){
 		start = GetRandomValue(0,nodes.Num());
 		end = GetRandomValue(0,nodes.Num());
 		if(start == end){
@@ -113,7 +113,6 @@ restart:
 		}
 		BeginDrawing();
 		ClearBackground(BLACK);
-		EndDrawing();
 		//draw non active
 		for(int i = 0; i<nodes.Num(); i++){
 			bool contains = TArrayContains(Active, i);
