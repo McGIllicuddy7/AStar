@@ -1,9 +1,17 @@
 #include "AStar.h"
+#ifdef __linux__
 #include <Raylib/raylib.h>
 #include <Raylib/raymath.h>
-//for testing 
 #define WIN_MAX 1400
-#define LCL_DIST 25
+#else
+#include <raylib.h>
+#include <raymath.h>
+#define WIN_MAX 100
+#endif
+
+//for testing 
+
+#define LCL_DIST 12
 struct node_t{
 	Vector2 location;
 	TArray<int> edges;
@@ -19,7 +27,7 @@ bool TArrayContains(TArray<int> &vec, int value){
 	return contains;
 }
 int main(){
-	const int node_num = 4096*1.5;
+	const int node_num = 4096*2;
 	SetRandomSeed(time(0));
 	TArray<node_t> nodes = {};
 	for(int i =0; i<node_num; i++){
@@ -77,6 +85,7 @@ int main(){
 			tval = 0;
 		}
 		else if(idx ==path.Num()){
+restart:
 			tval = 0;
 			start = GetRandomValue(0,nodes.Num());
 			end = GetRandomValue(0,nodes.Num());
@@ -85,6 +94,9 @@ int main(){
 			}
 			Active = {};
 			path = AStar(astarnodes,start,end);
+			if(path.Num()<2){
+				goto restart;
+			}
 			path.Add(end);
 			idx = 0;
 		}
