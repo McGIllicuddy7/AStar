@@ -45,10 +45,6 @@ int main(){
 			}
 		}
 	}
-	SetTraceLogLevel(LOG_FATAL);
-	SetTargetFPS(60);
-	InitWindow(WIN_MAX,WIN_MAX,"pathfinder");
-	TArray<int> Active = {};
 	int start = GetRandomValue(0,nodes.Num());
 	int end = GetRandomValue(0,nodes.Num());
 	if(start == end){
@@ -74,9 +70,24 @@ int main(){
 		Active.Add(path[i]);
 	}*/
 	path.Add(end);
+#ifdef profile
+	for(int i =0; i<500000; i++){
+		start = GetRandomValue(0,nodes.Num());
+		end = GetRandomValue(0,nodes.Num());
+		if(start == end){
+			end = (start+1)%node_num;
+		}
+		path = AStar(astarnodes, start, end);
+	}
+	return 0;
+#endif
 	int idx = 0;
 	double tval =0;
 	Color bg = {62,0,0,255};
+	SetTraceLogLevel(LOG_FATAL);
+	SetTargetFPS(60);
+	InitWindow(WIN_MAX,WIN_MAX,"pathfinder");
+	TArray<int> Active = {};
 	while(!WindowShouldClose()){
 		tval+= GetFrameTime();
 		if(idx<path.Num() && tval>0){
@@ -102,6 +113,7 @@ restart:
 		}
 		BeginDrawing();
 		ClearBackground(BLACK);
+		EndDrawing();
 		//draw non active
 		for(int i = 0; i<nodes.Num(); i++){
 			bool contains = TArrayContains(Active, i);
